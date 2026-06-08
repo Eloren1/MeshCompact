@@ -1,8 +1,8 @@
 placeholder=Введите текст…
 statsEmpty=Введите текст
 statsBytes={ob} байт
-statsLine=Сжатие: {lv}   ·   {ob} → {cb}   ·   −{pct}%   ·   {p} пак.
-srcLink=Открытый исходный код
+statsLine=Сжатие {lv}   ·   {ob} → {cb}   ·   −{pct}%   ·   {p} пак.
+srcLink=Исходный код
 localNote=Текст обрабатывается локально на вашем устройстве
 settingsLink=Настройки
 copied=Скопировано!
@@ -14,4 +14,5 @@ sThemeBlack=Чёрная
 sThemeLight=Светлая
 sBatchLbl=Размер пакета
 sCopyLbl=Копировать по нажатию на поле вывода
+sSaveTextLbl=Сохранять текст перед уходом
 sCloseBtn=Закрыть

@@ -89,7 +89,7 @@ body{
   border-radius:var(--radius);
   outline:none;resize:none;
   padding:16px 18px;
-  font-family:'Courier New',Courier,monospace;font-size:17px;line-height:1.65;
+  font-family:inherit;font-size:17px;line-height:1.65;
   caret-color:var(--accent);
 }
 #input::placeholder{color:var(--dim)}
@@ -129,7 +129,7 @@ body{
 #result{
   flex:1;min-height:0;
   padding:16px 18px;
-  font-family:'Courier New',Courier,monospace;font-size:17px;line-height:1.65;
+  font-family:inherit;font-size:17px;line-height:1.65;
   overflow-y:auto;
   cursor:pointer;
   white-space:pre-wrap;word-break:break-word;
@@ -148,6 +148,8 @@ body{
   border:1px solid var(--border);
   border-radius:var(--radius);
   padding:14px 18px;
+  margin-top:10px;
+  margin-bottom:10px;
 }
 
 .slider-wrap{
@@ -166,52 +168,49 @@ body{
   cursor:pointer;
 }
 
+#level-slider::-webkit-slider-runnable-track{
+  height:20px;
+  border-radius:10px;
+  background:
+    linear-gradient(var(--track-tick),var(--track-tick)) 5.5px 50%/2px 12px no-repeat,
+    linear-gradient(var(--track-tick),var(--track-tick)) calc((100% - 11px)/3 + 5.5px) 50%/2px 12px no-repeat,
+    linear-gradient(var(--track-tick),var(--track-tick)) calc(2*(100% - 11px)/3 + 5.5px) 50%/2px 12px no-repeat,
+    linear-gradient(var(--track-tick),var(--track-tick)) calc(100% - 5.5px) 50%/2px 12px no-repeat,
+    var(--track-bg);
+}
+
 #level-slider::-webkit-slider-thumb{
   -webkit-appearance:none;
   width:13px;
-  height:34px;
+  height:31px;
   border-radius:5px;
   background:var(--handle-color);
   border:2px solid rgba(0,0,0,0.4);
   cursor:pointer;
   box-shadow:0 1px 5px rgba(0,0,0,0.4);
-  transition:background .15s;
+  transition:background .08s;
 }
 
 #level-slider::-moz-range-thumb{
   width:13px;
-  height:34px;
+  height:31px;
   border-radius:5px;
   background:var(--handle-color);
   border:2px solid rgba(0,0,0,0.4);
   cursor:pointer;
   box-shadow:0 1px 5px rgba(0,0,0,0.4);
-  transition:background .15s;
+  transition:background .08s;
 }
 
 #level-slider::-moz-range-track{
   height:20px;
   border-radius:10px;
-  background:var(--track-bg);
-}
-
-.slider-ticks{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  left:0;right:0;
-  display:flex;
-  justify-content:space-between;
-  padding:0 6px;
-  pointer-events:none;
-}
-
-.slider-ticks i{
-  display:block;
-  width:2px;
-  height:9px;
-  background:var(--track-tick);
-  border-radius:1px;
+  background:
+    linear-gradient(var(--track-tick),var(--track-tick)) 5.5px 50%/2px 12px no-repeat,
+    linear-gradient(var(--track-tick),var(--track-tick)) calc((100% - 11px)/3 + 5.5px) 50%/2px 12px no-repeat,
+    linear-gradient(var(--track-tick),var(--track-tick)) calc(2*(100% - 11px)/3 + 5.5px) 50%/2px 12px no-repeat,
+    linear-gradient(var(--track-tick),var(--track-tick)) calc(100% - 5.5px) 50%/2px 12px no-repeat,
+    var(--track-bg);
 }
 
 footer{

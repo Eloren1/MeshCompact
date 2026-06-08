@@ -28,15 +28,12 @@
   <div class="slider-section">
     <div class="slider-wrap">
       <input type="range" id="level-slider" min="1" max="4" value="1" step="1">
-      <div class="slider-ticks" aria-hidden="true">
-        <i></i><i></i><i></i><i></i>
-      </div>
     </div>
   </div>
 </div>
 
 <footer>
-  <a href="#" id="src-link">Открытый исходный код</a>&ensp;·&ensp;<span id="local-note">Текст обрабатывается локально на вашем устройстве</span>&ensp;·&ensp;<a href="#" id="settings-link">Настройки</a>
+  <a href="https://github.com/Eloren1/mt-compress" id="src-link" target="_blank" rel="noopener">Исходный код</a>&ensp;·&ensp;<span id="local-note">Текст обрабатывается локально на вашем устройстве</span>&ensp;·&ensp;<a href="#" id="settings-link">Настройки</a>
 </footer>
 
 <div class="popup" id="popup"><div class="popup-box" id="popup-box">Скопировано!</div></div>
@@ -71,6 +68,10 @@
       <div class="s-row s-row-check">
         <label for="s-copy-click" id="s-copy-lbl">Копировать по нажатию на поле вывода</label>
         <input type="checkbox" id="s-copy-click" checked>
+      </div>
+      <div class="s-row s-row-check">
+        <label for="s-save-text" id="s-save-text-lbl">Сохранять текст перед уходом</label>
+        <input type="checkbox" id="s-save-text" checked>
       </div>
     </div>
     <div class="s-footer">
@@ -119,7 +120,7 @@ function makeI18N(raw) {
   };
 }
 
-const DEFAULT_SETTINGS = { lang: detectBrowserLang(), theme: 'dark', batchSize: 200, copyOnClick: true };
+const DEFAULT_SETTINGS = { lang: detectBrowserLang(), theme: 'dark', batchSize: 200, copyOnClick: true, saveText: true };
 let settings = { ...DEFAULT_SETTINGS };
 try { Object.assign(settings, JSON.parse(localStorage.getItem('mt-settings') || '{}')); } catch {}
 
@@ -147,6 +148,7 @@ function applyLang(l) {
   document.getElementById('s-theme-light').textContent  = t.sThemeLight;
   document.getElementById('s-batch-lbl').textContent    = t.sBatchLbl;
   document.getElementById('s-copy-lbl').textContent     = t.sCopyLbl;
+  document.getElementById('s-save-text-lbl').textContent = t.sSaveTextLbl;
   document.getElementById('s-close-btn').textContent    = t.sCloseBtn;
   updateStats();
 }
@@ -245,6 +247,7 @@ function openSettings() {
   document.getElementById('s-theme').value = settings.theme;
   document.getElementById('s-batch').value = settings.batchSize;
   document.getElementById('s-copy-click').checked = settings.copyOnClick;
+  document.getElementById('s-save-text').checked = settings.saveText;
   document.getElementById('s-overlay').classList.add('open');
 }
 
@@ -263,20 +266,45 @@ async function initApp() {
   applyTheme(settings.theme);
   applyLang(lang);
 
+  const inputEl = document.getElementById('input');
+  const isFirstVisit = !localStorage.getItem('mt-visited');
+  localStorage.setItem('mt-visited', '1');
+
+  if (isFirstVisit) {
+    try {
+      const sample = await fetch('sample.txt').then(r => r.text());
+      inputEl.value = sample.trim();
+      compress(level);
+    } catch {}
+  } else {
+    const saved = settings.saveText ? (localStorage.getItem('mt-text') || '') : '';
+    inputEl.value = saved;
+    if (saved) compress(level);
+    else updateStats();
+  }
+
   const slider = document.getElementById('level-slider');
   slider.value = level;
   updateHandleColor(level);
+
+  slider.addEventListener('touchstart', () => {
+    document.activeElement?.blur();
+  }, { passive: true });
 
   slider.addEventListener('input', function() {
     level = parseInt(this.value);
     localStorage.setItem('mt-level', level);
     updateHandleColor(level);
-    if (document.getElementById('input').value) compress(level);
+    if (inputEl.value) compress(level);
   });
 
-  document.getElementById('input').addEventListener('input', () => {
-    const val = document.getElementById('input').value;
-    if (!val) {
+  window.addEventListener('beforeunload', () => {
+    if (settings.saveText) localStorage.setItem('mt-text', inputEl.value);
+    else localStorage.removeItem('mt-text');
+  });
+
+  inputEl.addEventListener('input', () => {
+    if (!inputEl.value) {
       resultText = '';
       document.getElementById('result').innerHTML = '';
       updateStats();
@@ -323,6 +351,11 @@ async function initApp() {
 
   document.getElementById('s-copy-click').addEventListener('change', function() {
     settings.copyOnClick = this.checked;
+    saveSettings();
+  });
+
+  document.getElementById('s-save-text').addEventListener('change', function() {
+    settings.saveText = this.checked;
     saveSettings();
   });
 }
