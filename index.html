@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html data-theme="dark" data-lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Compress</title>
+<script>
+(function(){
+  try{var s=JSON.parse(localStorage.getItem('mt-settings')||'{}');
+  if(s.theme)document.documentElement.setAttribute('data-theme',s.theme);}catch(e){}
+})();
+</script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,7 +23,7 @@
     <button class="cp" onclick="copyResult()">COPY</button>
   </div>
 
-  <div id="result" onclick="copyResult()"></div>
+  <div id="result" onclick="resultClick()"></div>
 
   <div class="slider-section">
     <div class="slider-wrap">
@@ -27,14 +33,51 @@
       </div>
     </div>
   </div>
-
 </div>
 
 <footer>
-  <a href="#" id="src-link">Открытый исходный код</a>&ensp;·&ensp;Текст обрабатывается локально на вашем устройстве&ensp;·&ensp;<a href="#" id="settings-link">Настройки</a>
+  <a href="#" id="src-link">Открытый исходный код</a>&ensp;·&ensp;<span id="local-note">Текст обрабатывается локально на вашем устройстве</span>&ensp;·&ensp;<a href="#" id="settings-link">Настройки</a>
 </footer>
 
-<div class="popup" id="popup"><div class="popup-box">Copied!</div></div>
+<div class="popup" id="popup"><div class="popup-box" id="popup-box">Скопировано!</div></div>
+
+<!-- Settings Modal -->
+<div class="s-overlay" id="s-overlay">
+  <div class="s-box">
+    <div class="s-header">
+      <span class="s-title" id="s-title">Настройки</span>
+      <button class="s-x" id="s-x" aria-label="Close">✕</button>
+    </div>
+    <div class="s-body">
+      <div class="s-row">
+        <span id="s-lang-lbl">Язык</span>
+        <select id="s-lang">
+          <option value="ru">Русский</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+      <div class="s-row">
+        <span id="s-theme-lbl">Тема</span>
+        <select id="s-theme">
+          <option value="light" id="s-theme-light">Светлая</option>
+          <option value="dark" id="s-theme-dark">Темная</option>
+          <option value="black" id="s-theme-black">Чёрная</option>
+        </select>
+      </div>
+      <div class="s-row">
+        <span id="s-batch-lbl">Размер пакета</span>
+        <input type="number" id="s-batch" min="1" max="9999" value="200">
+      </div>
+      <div class="s-row s-row-check">
+        <label for="s-copy-click" id="s-copy-lbl">Копировать по нажатию на поле вывода</label>
+        <input type="checkbox" id="s-copy-click" checked>
+      </div>
+    </div>
+    <div class="s-footer">
+      <button class="s-close-btn" id="s-close-btn">Закрыть</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const MAPS = [
@@ -47,10 +90,73 @@ const MAPS = [
   {з:'3',т:'t',ч:'4',ш:'w',щ:'w',Ч:'4',Ш:'W',Щ:'W','—':'-'}
 ];
 
-const LEVEL_COLORS = ['', 'var(--lc-1)', 'var(--lc-2)', 'var(--lc-3)', 'var(--lc-4)'];
+const LEVEL_COLORS = ['','var(--lc-1)','var(--lc-2)','var(--lc-3)','var(--lc-4)'];
 
-const saved = parseInt(localStorage.getItem('mt-level'));
-let level = (saved >= 1 && saved <= 4) ? saved : 1;
+const I18N = {};
+
+function detectBrowserLang() {
+  return (navigator.language || 'en').toLowerCase().startsWith('ru') ? 'ru' : 'en';
+}
+
+function parseTxt(text) {
+  const out = {};
+  for (const line of text.split('\n')) {
+    const i = line.indexOf('=');
+    if (i < 0) continue;
+    out[line.slice(0, i).trim()] = line.slice(i + 1).trimEnd();
+  }
+  return out;
+}
+
+function makeI18N(raw) {
+  return {
+    ...raw,
+    statsBytes: ob => raw.statsBytes.replace('{ob}', ob),
+    statsLine: (lv, ob, cb, pct, p) =>
+      raw.statsLine
+        .replace('{lv}', lv).replace('{ob}', ob)
+        .replace('{cb}', cb).replace('{pct}', pct).replace('{p}', p),
+  };
+}
+
+const DEFAULT_SETTINGS = { lang: detectBrowserLang(), theme: 'dark', batchSize: 200, copyOnClick: true };
+let settings = { ...DEFAULT_SETTINGS };
+try { Object.assign(settings, JSON.parse(localStorage.getItem('mt-settings') || '{}')); } catch {}
+
+if (!['ru', 'en'].includes(settings.lang)) settings.lang = detectBrowserLang();
+let lang = settings.lang;
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+}
+
+function applyLang(l) {
+  lang = l;
+  document.documentElement.setAttribute('data-lang', l);
+  const t = I18N[l];
+  document.getElementById('input').placeholder          = t.placeholder;
+  document.getElementById('src-link').textContent       = t.srcLink;
+  document.getElementById('local-note').textContent     = t.localNote;
+  document.getElementById('settings-link').textContent  = t.settingsLink;
+  document.getElementById('popup-box').textContent      = t.copied;
+  document.getElementById('s-title').textContent        = t.sTitle;
+  document.getElementById('s-lang-lbl').textContent     = t.sLangLbl;
+  document.getElementById('s-theme-lbl').textContent    = t.sThemeLbl;
+  document.getElementById('s-theme-dark').textContent   = t.sThemeDark;
+  document.getElementById('s-theme-black').textContent  = t.sThemeBlack;
+  document.getElementById('s-theme-light').textContent  = t.sThemeLight;
+  document.getElementById('s-batch-lbl').textContent    = t.sBatchLbl;
+  document.getElementById('s-copy-lbl').textContent     = t.sCopyLbl;
+  document.getElementById('s-close-btn').textContent    = t.sCloseBtn;
+  updateStats();
+}
+
+function saveSettings() {
+  localStorage.setItem('mt-settings', JSON.stringify(settings));
+}
+
+const savedLevel = parseInt(localStorage.getItem('mt-level'));
+let level = (savedLevel >= 1 && savedLevel <= 4) ? savedLevel : 1;
 let resultText = '';
 
 function mergedMap(n) {
@@ -86,9 +192,7 @@ function compress(n) {
   for (let i = 0; i < res.length; i++) {
     const ch = res[i];
     if (ch === '\n') { html += '\n'; continue; }
-    html += orig[i] !== ch
-      ? `<span class="c">${esc(ch)}</span>`
-      : esc(ch);
+    html += orig[i] !== ch ? `<span class="c">${esc(ch)}</span>` : esc(ch);
   }
   document.getElementById('result').innerHTML = html;
   updateStats();
@@ -97,19 +201,16 @@ function compress(n) {
 function updateStats() {
   const input = document.getElementById('input').value;
   const el = document.getElementById('stats');
+  const t = I18N[lang];
   const ob = byteLen(input);
 
-  if (!ob) { el.textContent = 'Введите текст'; return; }
-
-  if (!resultText) {
-    el.textContent = `${ob} байт`;
-    return;
-  }
+  if (!ob) { el.textContent = t.statsEmpty; return; }
+  if (!resultText) { el.textContent = t.statsBytes(ob); return; }
 
   const cb = byteLen(resultText);
   const pct = Math.round((ob - cb) / ob * 100);
-  const p = Math.ceil(cb / 200);
-  el.textContent = `Сжатие: ${level}   ·   ${ob} → ${cb}   ·   −${pct}%   ·   ${p} пак.`;
+  const p = Math.ceil(cb / settings.batchSize);
+  el.textContent = t.statsLine(level, ob, cb, pct, p);
 }
 
 let popTimer;
@@ -125,37 +226,108 @@ async function copyResult() {
   try {
     await navigator.clipboard.writeText(resultText);
   } catch {
-    const t = Object.assign(document.createElement('textarea'),
+    const ta = Object.assign(document.createElement('textarea'),
       {value: resultText, style: 'position:fixed;opacity:0'});
-    document.body.appendChild(t);
-    t.select();
+    document.body.appendChild(ta);
+    ta.select();
     document.execCommand('copy');
-    t.remove();
+    ta.remove();
   }
   showPopup();
 }
 
-const slider = document.getElementById('level-slider');
-slider.value = level;
-updateHandleColor(level);
+function resultClick() {
+  if (settings.copyOnClick) copyResult();
+}
 
-slider.addEventListener('input', function() {
-  level = parseInt(this.value);
-  localStorage.setItem('mt-level', level);
+function openSettings() {
+  document.getElementById('s-lang').value = settings.lang;
+  document.getElementById('s-theme').value = settings.theme;
+  document.getElementById('s-batch').value = settings.batchSize;
+  document.getElementById('s-copy-click').checked = settings.copyOnClick;
+  document.getElementById('s-overlay').classList.add('open');
+}
+
+function closeSettings() {
+  document.getElementById('s-overlay').classList.remove('open');
+}
+
+async function initApp() {
+  const [ruTxt, enTxt] = await Promise.all([
+    fetch('i18n/ru.txt').then(r => r.text()),
+    fetch('i18n/en.txt').then(r => r.text()),
+  ]);
+  I18N.ru = makeI18N(parseTxt(ruTxt));
+  I18N.en = makeI18N(parseTxt(enTxt));
+
+  applyTheme(settings.theme);
+  applyLang(lang);
+
+  const slider = document.getElementById('level-slider');
+  slider.value = level;
   updateHandleColor(level);
-  if (document.getElementById('input').value) compress(level);
-});
 
-document.getElementById('input').addEventListener('input', () => {
-  const val = document.getElementById('input').value;
-  if (!val) {
-    resultText = '';
-    document.getElementById('result').innerHTML = '';
-    updateStats();
-    return;
-  }
-  compress(level);
-});
+  slider.addEventListener('input', function() {
+    level = parseInt(this.value);
+    localStorage.setItem('mt-level', level);
+    updateHandleColor(level);
+    if (document.getElementById('input').value) compress(level);
+  });
+
+  document.getElementById('input').addEventListener('input', () => {
+    const val = document.getElementById('input').value;
+    if (!val) {
+      resultText = '';
+      document.getElementById('result').innerHTML = '';
+      updateStats();
+      return;
+    }
+    compress(level);
+  });
+
+  document.getElementById('settings-link').addEventListener('click', e => {
+    e.preventDefault();
+    openSettings();
+  });
+
+  document.getElementById('s-x').addEventListener('click', closeSettings);
+  document.getElementById('s-close-btn').addEventListener('click', closeSettings);
+  document.getElementById('s-overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('s-overlay')) closeSettings();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeSettings();
+  });
+
+  document.getElementById('s-lang').addEventListener('change', function() {
+    settings.lang = this.value;
+    lang = this.value;
+    applyLang(lang);
+    saveSettings();
+  });
+
+  document.getElementById('s-theme').addEventListener('change', function() {
+    settings.theme = this.value;
+    applyTheme(this.value);
+    saveSettings();
+  });
+
+  document.getElementById('s-batch').addEventListener('input', function() {
+    const v = parseInt(this.value);
+    if (v >= 1 && v <= 9999) {
+      settings.batchSize = v;
+      saveSettings();
+      updateStats();
+    }
+  });
+
+  document.getElementById('s-copy-click').addEventListener('change', function() {
+    settings.copyOnClick = this.checked;
+    saveSettings();
+  });
+}
+
+initApp();
 </script>
 </body>
 </html>

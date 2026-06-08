@@ -1,0 +1,17 @@
+placeholder=Enter text…
+statsEmpty=Enter text
+statsBytes={ob} bytes
+statsLine=Compression: {lv}   ·   {ob} → {cb}   ·   −{pct}%   ·   {p} pkg.
+srcLink=Open source
+localNote=Text is processed locally on your device
+settingsLink=Settings
+copied=Copied!
+sTitle=Settings
+sLangLbl=Language
+sThemeLbl=Theme
+sThemeDark=Dark
+sThemeBlack=Black
+sThemeLight=Light
+sBatchLbl=Batch size
+sCopyLbl=Copy on output field click
+sCloseBtn=Close
