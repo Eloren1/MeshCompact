@@ -8,8 +8,8 @@
   --border:#333;
   --text:#dddddd;
   --dim:#666;
-  --green:#b0e8b0;
-  --accent:#4a9eff;
+  --green:#96e496;
+  --accent:#2e6db3;
   --radius:14px;
 
   --lc-1:#72e672;
@@ -20,6 +20,10 @@
   --track-bg:#5a5a5a;
   --track-tick:rgba(0,0,0,0.45);
   --handle-color:var(--lc-1);
+  --thumb-shadow:0 1px 5px rgba(0,0,0,0.4);
+  --cancel-bg:var(--border);
+  --cancel-bg-hover:var(--track-bg);
+  --cancel-color:var(--text);
 
 }
 
@@ -29,6 +33,7 @@
   --border:#1c1c1c;
   --text:#e0e0e0;
   --dim:#555;
+  --accent:#255a95;
   --track-bg:#3a3a3a;
 }
 
@@ -38,21 +43,26 @@
   --border:#21262d;
   --text:#c9d1d9;
   --dim:#6e7681;
-  --accent:#58a6ff;
+  --accent:#4080cc;
+  --green:#78d878;
   --track-bg:#2d333b;
   --track-tick:rgba(0,0,0,0.5);
 }
 
 [data-theme=light]{
   --bg:#ebebeb;
+  --thumb-shadow:0 1px 4px rgba(0,0,0,0.28);
   --panel:#ffffff;
   --border:#cccccc;
   --text:#1a1a1a;
   --dim:#999;
-  --green:#0f7a0f;
+  --green:#0e8a0e;
   --accent:#1a6fd4;
   --track-bg:#bbbbbb;
   --track-tick:rgba(255,255,255,0.5);
+  --cancel-bg:#888;
+  --cancel-bg-hover:#6e6e6e;
+  --cancel-color:#fff;
 }
 
 html,body{
@@ -204,7 +214,7 @@ body{
   background:var(--handle-color);
   border:2px solid rgba(0,0,0,0.4);
   cursor:pointer;
-  box-shadow:0 1px 5px rgba(0,0,0,0.4);
+  box-shadow:var(--thumb-shadow);
   transition:background .08s;
 }
 
@@ -215,7 +225,7 @@ body{
   background:var(--handle-color);
   border:2px solid rgba(0,0,0,0.4);
   cursor:pointer;
-  box-shadow:0 1px 5px rgba(0,0,0,0.4);
+  box-shadow:var(--thumb-shadow);
   transition:background .08s;
 }
 
@@ -460,8 +470,8 @@ footer a{color:var(--dim);text-decoration:underline;text-underline-offset:2px}
 }
 
 .s-cancel-btn{
-  background:none;
-  color:var(--dim);
-  border:1px solid var(--border);
+  background:var(--cancel-bg);
+  color:var(--cancel-color);
+  border:1px solid var(--cancel-bg);
 }
-.s-cancel-btn:hover{opacity:1;background:var(--border);color:var(--text)}
+.s-cancel-btn:hover{opacity:1;background:var(--cancel-bg-hover);color:var(--cancel-color)}

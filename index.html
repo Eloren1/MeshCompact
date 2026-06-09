@@ -79,6 +79,10 @@
         <label for="s-save-text" id="s-save-text-lbl">Сохранять текст перед уходом</label>
         <input type="checkbox" id="s-save-text" checked>
       </div>
+      <div class="s-row s-row-check">
+        <label for="s-highlight" id="s-highlight-lbl">Выделять цветом замененные символы</label>
+        <input type="checkbox" id="s-highlight">
+      </div>
       <div class="s-row">
         <button class="s-swap-rules-btn" id="s-swap-rules-btn">Настроить правила замены символов</button>
       </div>
@@ -160,7 +164,7 @@ function makeI18N(raw) {
   };
 }
 
-const DEFAULT_SETTINGS = { lang: detectBrowserLang(), theme: 'dark', copyOnClick: true, saveText: true };
+const DEFAULT_SETTINGS = { lang: detectBrowserLang(), theme: 'dark', copyOnClick: true, saveText: true, highlight: false };
 let settings = { ...DEFAULT_SETTINGS };
 try { Object.assign(settings, JSON.parse(localStorage.getItem('mesh-settings') || '{}')); } catch {}
 
@@ -189,6 +193,7 @@ function applyLang(l) {
   document.getElementById('s-theme-mirror').textContent = t.sThemeMirror;
   document.getElementById('s-copy-lbl').textContent     = t.sCopyLbl;
   document.getElementById('s-save-text-lbl').textContent = t.sSaveTextLbl;
+  document.getElementById('s-highlight-lbl').textContent = t.sHighlightLbl;
   document.getElementById('s-close-btn').textContent    = t.sCloseBtn;
   document.getElementById('s-swap-rules-btn').textContent = t.sSwapRulesBtn;
   document.getElementById('s-install-btn').textContent   = t.sInstallBtn;
@@ -239,7 +244,7 @@ function compress(n) {
   for (let i = 0; i < res.length; i++) {
     const ch = res[i];
     if (ch === '\n') { html += '\n'; continue; }
-    html += orig[i] !== ch ? `<span class="c">${esc(ch)}</span>` : esc(ch);
+    html += (orig[i] !== ch && settings.highlight) ? `<span class="c">${esc(ch)}</span>` : esc(ch);
   }
   document.getElementById('result').innerHTML = html;
   updateStats();
@@ -255,7 +260,7 @@ function updateStats() {
   if (!resultText) { el.textContent = t.statsBytes(ob); return; }
 
   const cb = byteLen(resultText);
-  const pct = Math.round((ob - cb) / ob * 100);
+  const pct = Math.round((ob - cb) / ob * 200);
   el.textContent = t.statsLine(ob, cb, pct);
 }
 
@@ -302,6 +307,7 @@ function openSettings() {
   document.getElementById('s-theme').value = settings.theme;
   document.getElementById('s-copy-click').checked = settings.copyOnClick;
   document.getElementById('s-save-text').checked = settings.saveText;
+  document.getElementById('s-highlight').checked = settings.highlight;
   document.getElementById('s-overlay').classList.add('open');
 }
 
@@ -428,6 +434,13 @@ async function initApp() {
   document.getElementById('s-save-text').addEventListener('change', function() {
     settings.saveText = this.checked;
     saveSettings();
+  });
+
+  document.getElementById('s-highlight').addEventListener('change', function() {
+    settings.highlight = this.checked;
+    saveSettings();
+    const inputEl = document.getElementById('input');
+    if (inputEl.value) compress(level);
   });
 
   document.getElementById('s-swap-rules-btn').addEventListener('click', openSwapRules);
