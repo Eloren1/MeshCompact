@@ -59,7 +59,7 @@
   --border:#cccccc;
   --text:#1a1a1a;
   --dim:#999;
-  --green:#0a8c0a;
+  --green:#007a00;
   --accent:#1a6fd4;
   --track-bg:#bbbbbb;
   --track-tick:rgba(255,255,255,0.5);
@@ -74,7 +74,7 @@
   --border:#b9b2a1;
   --text:#211d16;
   --dim:#5a5347;
-  --green:#0a8c0a;
+  --green:#007a00;
   --accent:#9b6020;
   --track-bg:#cfcabc;
   --track-tick:rgba(255,255,255,0.5);
@@ -125,6 +125,9 @@ body{
   text-align:center;
   background:var(--bg);
   z-index:10;
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-touch-callout:none;
 }
 
 #input{
@@ -198,6 +201,9 @@ body{
   transition:color .12s;
   line-height:0;
   z-index:1;
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-touch-callout:none;
 }
 .clip-btn:hover{color:var(--text)}
 .clip-btn.copied:hover{color:var(--dim)}
@@ -302,7 +308,7 @@ footer a{color:var(--dim);text-decoration:underline;text-underline-offset:2px}
 }
 
 @media(orientation:landscape) and (max-height:500px){
-  footer{padding:2px 16px 3px;font-size:11px}
+  footer{padding:2px 16px 3px;font-size:8px}
   .app-header{padding:3px 16px 2px;font-size:13px}
   .app{padding:28px 14px 26px;gap:6px}
   .slider-section{margin-top:3px;margin-bottom:3px;padding:8px 8px}
@@ -346,6 +352,8 @@ footer a{color:var(--dim);text-decoration:underline;text-underline-offset:2px}
   width:100%;
   max-width:400px;
   overflow:hidden;
+  user-select:none;
+  -webkit-user-select:none;
 }
 
 .s-header{
@@ -458,11 +466,11 @@ footer a{color:var(--dim);text-decoration:underline;text-underline-offset:2px}
 .s-row input[type=checkbox]:checked::after{
   content:'';
   position:absolute;
-  left:4px;top:1px;
-  width:6px;height:10px;
+  left:50%;top:45%;
+  width:5px;height:9px;
   border:2px solid #fff;
   border-top:none;border-left:none;
-  transform:rotate(45deg);
+  transform:translate(-50%,-50%) rotate(45deg);
 }
 
 .s-footer{
@@ -497,11 +505,14 @@ footer a{color:var(--dim);text-decoration:underline;text-underline-offset:2px}
   cursor:pointer;
   text-align:left;
   transition:background .12s,border-color .12s;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 .s-swap-rules-btn:hover{background:var(--ghost-hover)}
 
-.s-row-install{flex-direction:column;align-items:stretch}
-.s-install-hint{font-size:14px;line-height:1.4;padding:6px 10px 8px}
+.s-row-install{flex-direction:column;align-items:stretch;margin-top:-3px}
+.s-install-hint{font-size:14px;line-height:1.4;padding:6px 10px 8px;text-align:center}
 
 .s-box-tall{
   max-width:520px;

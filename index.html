@@ -23,12 +23,12 @@
 
 <div class="app">
   <div class="app-header"><img src="src/icon/icon.svg" width="18" height="18" style="vertical-align:-3px;margin-right:6px" alt="">MeshCompact</div>
-  <textarea id="input" placeholder="Введите текст…" spellcheck="false"
+  <textarea id="input" placeholder="" spellcheck="false"
             autocorrect="off" autocapitalize="off"></textarea>
 
   <div class="stats-row">
     <span id="stats"></span>
-    <div class="popup" id="popup"><div class="popup-box" id="popup-box">Скопировано!</div></div>
+    <div class="popup" id="popup"><div class="popup-box" id="popup-box"></div></div>
   </div>
 
   <div class="result-wrap">
@@ -52,56 +52,56 @@
 </div>
 
 <footer style="visibility:hidden">
-  <a href="https://github.com/Eloren1/MeshCompact" id="src-link" target="_blank" rel="noopener">Исходный код</a><span class="f-sep" id="f-sep-1">&ensp;·&ensp;</span><span id="local-note">Текст обрабатывается локально на вашем устройстве</span><span class="f-sep" id="f-sep-2">&ensp;·&ensp;</span><a href="#" id="settings-link">Настройки</a>
+  <a href="https://github.com/Eloren1/MeshCompact" id="src-link" target="_blank" rel="noopener"></a><span class="f-sep" id="f-sep-1">&ensp;·&ensp;</span><span id="local-note"></span><span class="f-sep" id="f-sep-2">&ensp;·&ensp;</span><a href="#" id="settings-link"></a>
 </footer>
 
 <!-- Settings Modal -->
 <div class="s-overlay" id="s-overlay">
   <div class="s-box">
     <div class="s-header">
-      <span class="s-title" id="s-title">Настройки</span>
+      <span class="s-title" id="s-title"></span>
       <button class="s-x" id="s-x" aria-label="Close">✕</button>
     </div>
     <div class="s-body">
       <div class="s-row">
-        <span id="s-lang-lbl">Язык</span>
+        <span id="s-lang-lbl"></span>
         <select id="s-lang">
           <option value="ru">Русский</option>
           <option value="en">English</option>
         </select>
       </div>
       <div class="s-row">
-        <span id="s-theme-lbl">Тема</span>
+        <span id="s-theme-lbl"></span>
         <select id="s-theme">
-          <option value="light" id="s-theme-light">Светлая</option>
-          <option value="dark" id="s-theme-dark">Темная</option>
-          <option value="black" id="s-theme-black">Чёрная</option>
-          <option value="mirror" id="s-theme-mirror">Зеркало</option>
-          <option value="beige" id="s-theme-beige">Бежевая</option>
+          <option value="light" id="s-theme-light"></option>
+          <option value="beige" id="s-theme-beige"></option>
+          <option value="dark" id="s-theme-dark"></option>
+          <option value="black" id="s-theme-black"></option>
+          <option value="mirror" id="s-theme-mirror"></option>
         </select>
       </div>
       <div class="s-row s-row-check">
-        <label for="s-copy-click" id="s-copy-lbl">Копировать по нажатию на поле вывода</label>
+        <label for="s-copy-click" id="s-copy-lbl"></label>
         <input type="checkbox" id="s-copy-click" checked>
       </div>
       <div class="s-row s-row-check">
-        <label for="s-save-text" id="s-save-text-lbl">Сохранять текст перед уходом</label>
-        <input type="checkbox" id="s-save-text" checked>
-      </div>
-      <div class="s-row s-row-check">
-        <label for="s-highlight" id="s-highlight-lbl">Выделять цветом замененные символы</label>
+        <label for="s-highlight" id="s-highlight-lbl"></label>
         <input type="checkbox" id="s-highlight">
       </div>
+      <div class="s-row s-row-check">
+        <label for="s-save-text" id="s-save-text-lbl"></label>
+        <input type="checkbox" id="s-save-text" checked>
+      </div>
       <div class="s-row">
-        <button class="s-swap-rules-btn" id="s-swap-rules-btn">Настроить правила замены символов</button>
+        <button class="s-swap-rules-btn" id="s-swap-rules-btn"></button>
       </div>
 <div class="s-row s-row-install" id="s-install-row" style="display:none">
-        <button class="s-swap-rules-btn" id="s-install-btn">Добавить на рабочий стол</button>
+        <button class="s-swap-rules-btn" id="s-install-btn"></button>
         <div class="s-install-hint" id="s-install-hint" style="display:none"></div>
       </div>
     </div>
     <div class="s-footer">
-      <button class="s-close-btn" id="s-close-btn">Закрыть</button>
+      <button class="s-close-btn" id="s-close-btn"></button>
     </div>
   </div>
 </div>
@@ -110,15 +110,15 @@
 <div class="s-overlay" id="sr-overlay">
   <div class="s-box s-box-tall">
     <div class="s-header">
-      <span class="s-title" id="sr-title">Правила замены символов</span>
+      <span class="s-title" id="sr-title"></span>
       <button class="s-x" id="sr-x" aria-label="Close">✕</button>
     </div>
     <div class="s-body s-body-grow">
       <textarea id="sr-textarea" class="sr-textarea" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
     </div>
     <div class="s-footer s-footer-two">
-      <button class="s-close-btn s-cancel-btn" id="sr-cancel">Отмена</button>
-      <button class="s-close-btn s-save-btn" id="sr-save">Сохранить</button>
+      <button class="s-close-btn s-cancel-btn" id="sr-cancel"></button>
+      <button class="s-close-btn s-save-btn" id="sr-save"></button>
     </div>
   </div>
 </div>
@@ -224,7 +224,7 @@ function applyLang(l) {
   document.getElementById('s-close-btn').textContent    = t.sCloseBtn;
   document.getElementById('s-swap-rules-btn').textContent = t.sSwapRulesBtn;
   document.getElementById('s-install-btn').textContent   = t.sInstallBtn;
-  document.getElementById('s-install-hint').innerHTML = t.sInstallHint.replace('{icon}', '<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 48 48" style="vertical-align:-4px" aria-hidden="true"><path d="M35.274 15.838H31.18a1.5 1.5 0 1 0 0 3h4.095c.827 0 1.5.673 1.5 1.5v19.616c0 .827-.673 1.5-1.5 1.5H12.726c-.827 0-1.5-.673-1.5-1.5V20.338c0-.827.673-1.5 1.5-1.5h4.095a1.5 1.5 0 1 0 0-3h-4.095a4.505 4.505 0 0 0-4.5 4.5v19.616c0 2.481 2.019 4.5 4.5 4.5h22.549c2.481 0 4.5-2.019 4.5-4.5V20.338a4.506 4.506 0 0 0-4.501-4.5zM18.407 12.81l4.143-4.143v19.748a1.5 1.5 0 1 0 3 0V8.667l4.143 4.143c.293.293.677.439 1.061.439s.768-.146 1.061-.439a1.5 1.5 0 0 0 0-2.121l-6.703-6.704a1.5 1.5 0 0 0-2.122 0l-6.704 6.704a1.5 1.5 0 1 0 2.121 2.121z" fill="currentColor"/></svg>');
+  document.getElementById('s-install-hint').innerHTML = t.sInstallHint.replace('{icon}', '<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 48 48" style="vertical-align:-5px" aria-hidden="true"><path d="M35.274 15.838H31.18a1.5 1.5 0 1 0 0 3h4.095c.827 0 1.5.673 1.5 1.5v19.616c0 .827-.673 1.5-1.5 1.5H12.726c-.827 0-1.5-.673-1.5-1.5V20.338c0-.827.673-1.5 1.5-1.5h4.095a1.5 1.5 0 1 0 0-3h-4.095a4.505 4.505 0 0 0-4.5 4.5v19.616c0 2.481 2.019 4.5 4.5 4.5h22.549c2.481 0 4.5-2.019 4.5-4.5V20.338a4.506 4.506 0 0 0-4.501-4.5zM18.407 12.81l4.143-4.143v19.748a1.5 1.5 0 1 0 3 0V8.667l4.143 4.143c.293.293.677.439 1.061.439s.768-.146 1.061-.439a1.5 1.5 0 0 0 0-2.121l-6.703-6.704a1.5 1.5 0 0 0-2.122 0l-6.704 6.704a1.5 1.5 0 1 0 2.121 2.121z" fill="currentColor"/></svg>');
   document.getElementById('sr-title').textContent       = t.sSwapRulesTitle;
   document.getElementById('sr-cancel').textContent      = t.sSwapRulesCancel;
   document.getElementById('sr-save').textContent        = t.sSwapRulesSave;
@@ -275,6 +275,7 @@ function compress(n) {
     html += (orig[i] !== ch && settings.highlight) ? `<span class="c">${esc(ch)}</span>` : esc(ch);
   }
   document.getElementById('result').innerHTML = html;
+  if (settings.saveText) localStorage.setItem('mesh-text', text);
   updateStats();
 }
 
