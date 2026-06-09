@@ -15,6 +15,9 @@
 <link rel="apple-touch-icon" href="src/icon/apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="style.css">
+<link rel="preload" href="i18n/ru.txt" as="fetch" crossorigin>
+<link rel="preload" href="i18n/en.txt" as="fetch" crossorigin>
+<link rel="preload" href="swap_rules.txt" as="fetch" crossorigin>
 </head>
 <body>
 
@@ -345,11 +348,15 @@ function saveSwapRules() {
 }
 
 async function initApp() {
-  const [ruTxt, enTxt, mapsTxt] = await Promise.all([
+  const isFirstVisit = !localStorage.getItem('mesh-visited');
+  localStorage.setItem('mesh-visited', '1');
+
+  const fetches = [
     fetch('i18n/ru.txt').then(r => r.text()),
     fetch('i18n/en.txt').then(r => r.text()),
     fetch('swap_rules.txt').then(r => r.text()),
-  ]);
+  ];
+  const [ruTxt, enTxt, mapsTxt] = await Promise.all(fetches);
   I18N.ru = makeI18N(parseTxt(ruTxt));
   I18N.en = makeI18N(parseTxt(enTxt));
   defaultMapsTxt = mapsTxt;
@@ -362,15 +369,12 @@ async function initApp() {
   updateResultCursor();
 
   const inputEl = document.getElementById('input');
-  const isFirstVisit = !localStorage.getItem('mesh-visited');
-  localStorage.setItem('mesh-visited', '1');
+
+  const SAMPLE_TEXT = 'Скрывать свои чувства, следить за выражением лица, поступать так, как поступают другие, — все это стало инстинктивной реакцией человека.';
 
   if (isFirstVisit) {
-    try {
-      const sample = await fetch('sample.txt').then(r => r.text());
-      inputEl.value = sample.trim();
-      compress(level);
-    } catch {}
+    inputEl.value = SAMPLE_TEXT;
+    compress(level);
   } else {
     const saved = settings.saveText ? (localStorage.getItem('mesh-text') || '') : '';
     inputEl.value = saved;
